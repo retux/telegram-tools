@@ -10,3 +10,4 @@ So, now, DON'T start daemon as root. USE an unpriveleged user.
 
 Sorry, there's no even Makefile yet. Do gcc telegramclid.c -o telegramclid.
 
+Within telegram-minion directory there is a set of python scripts which 'automates' a kind of conversation and reacts to master's commands.
