@@ -80,6 +80,7 @@ class ClientSocket:
 			self.alive = False
 			if self.logging:
 				self.fd.write( self.timestamp + ' Failed to connect to socket. Error code: ' + str(msg[0]) + ' , Error message : ' + msg[1] )
+				self.fd.flush()
 
 
 	def SendData(self, message):
@@ -90,12 +91,14 @@ class ClientSocket:
 			self.alive = True
 			if self.logging:
 				self.fd.write( self.timestamp + ' Sent data: ' + message)
+				self.fd.flush()
 
 		except socket.error:
 			#Send failed
 			self.alive = False
 			if self.logging:
 				self.fd.write( self.timestamp + ' Failed to send data remote socket \n')
+				self.fd.flush
 
 	def ReceiveData(self):
 		self.UpdateTimestamp()
@@ -108,14 +111,17 @@ class ClientSocket:
 				# logs the received data
 				if self.logging:
 					self.fd.write(self.timestamp + ' Data received: ' + reply)
+					self.fd.flush()
 				return reply
 			else:
 				self.alive = False
 				if self.logging:
 					self.fd.write( self.timestamp + ' Disconnected by remote server\n')
+					self.fd.flush()
 		except socket.error:
 			if self.logging:
 				self.fd.write( self.timestamp +' Failed trying to read socket \n')
+				self.fd.flush()
 
 
 	def Close(self):
@@ -125,3 +131,4 @@ class ClientSocket:
 		if (self.logging): 
 			UpdateTimestamp()
 			self.fd.write( self.timestamp + msg)	
+			self.fd.flush()
