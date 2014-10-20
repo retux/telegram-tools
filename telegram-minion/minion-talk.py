@@ -37,7 +37,7 @@ def main():
 		if myMinion.socket and myMinion.alive:
 			while True and myMinion.alive:
 				data = myMinion.ReceiveData()
-				print "Debug data rx: " + data
+				print "Debug data rx: " + str(data)
 				result = parseCommand(data)
 				if result != -1 and result != None:
 					myMinion.SendData(str(result))
