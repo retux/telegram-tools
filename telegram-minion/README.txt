@@ -33,6 +33,18 @@ So, more is needed, filtering by mime/type... or some safer way. And remember: w
 If you need it remember to filter it.
 
 
-Disclaimer: this code is under GPL License, and is provided as it is. Use at your own risk.
+Start procedure:
+---------------
 
+1) Start telegram-cli by using telegramclid (telegram-cli daemonizer).
+
+2) Start minion-talk.py in foreground, or once you're ready in background:
+
+	$ nohup /path/to/minion-talk.py &
+
+
+
+
+Disclaimer: this code is under GPL License, and is provided as it is. Use at your own risk.
+----------
 
