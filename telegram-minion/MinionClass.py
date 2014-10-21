@@ -20,7 +20,7 @@ class MinionUptime(MinionLauncher):
 			p = Popen(["uptime"], stdout=PIPE)
 			return p.communicate()[0]
 		except:
-			return "Error: no uptime available."
+			return "Error: minion says no uptime available."
 
 
 # parent class, returns fortune cookie
@@ -35,7 +35,38 @@ class MinionGetFortune(MinionLauncher):
 			return ' ' + FortuneNoLF
 			#return ' ' + p.communicate()[0]
 		except:
-			return " Error: no fortune now. Is fortune package installed?"
+			return " Error: no fortune now for minion. Is fortune package installed?"
+
+# // Gets photo by msg_id, specially suited for @esturniolo's needs
+# // this class don't do very much, just sanitize a little msg_id
+
+class MinionGetPic(MinionLauncher):
+	def __init__(self, message_id):
+		self.msg_id = message_id
+
+	def GetPic(self):
+		try:
+			if int(self.msg_id) >= 0:
+				return "load_photo " + str(self.msg_id)
+			else:
+				return "Error, minion got a suspicious message id."
+		except:
+			return "Error, minion got an incorrect message id."
 
 
+# // Gets file by msg_id, specially suited for @esturniolo's needs
+# // this class don't do very much, just sanitize a little msg_id
+
+class MinionGetFile(MinionLauncher):
+	def __init__(self, message_id):
+		self.msg_id = message_id
+
+	def GetFile(self):
+		try:
+			if int(self.msg_id) >= 0:
+				return "load_document " + str(self.msg_id)
+			else:
+				return "Error, minion got a suspicious message id."
+		except:
+			return "Error, minion got an incorrect message id."
 

@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 """
@@ -37,7 +38,7 @@ def main():
 		if myMinion.socket and myMinion.alive:
 			while True and myMinion.alive:
 				data = myMinion.ReceiveData()
-				print "Debug data rx: " + str(data)
+				# // print "Debug data rx: " + str(data)
 				result = parseCommand(data)
 				if result != -1 and result != None:
 					myMinion.SendData(str(result))
@@ -62,12 +63,17 @@ def parseCommand(reply):
 
 		#reply = None
 		hour, peer = header.split(']', 1)
+		messageID, msgTime = hour.split('[', 1)
+		messageID = messageID.strip()
 		peer = peer.strip()
 		peer = re.sub(r' ', "_", peer)
-		# // Just for some debugging
+		# // BOF Just for some debugging
+		#print "msgID: " + messageID
 		#print "hour: " + hour
-		print "peer: " + peer
-		print "message: " + message
+		#print "peer: " + peer
+		#print "message: " + message
+		# // EOF for dubbugging
+		# // Check for commands
 		if re.search( r'miniondo=', message):
 			minion, command = message.split('=', 1)
 			command = command.strip()
@@ -86,14 +92,38 @@ def parseCommand(reply):
 				Fortune = myMinionDo.GetFortune()
 				Fortune = re.sub(r'\t', "   ", Fortune)
 				str2Send = 'msg ' + peer + Fortune + "\r\n"				
-				print 'Debug str2Send=' + str2Send
 				myMinionDo = None		# // delete the object
 				return str2Send
 			else:
 				return -1
+		# // Check for other actions, like receiving pics or files. Asked by @esturniolo
+		if message.strip() == "[photo]":
+			# /// print "Debug foto recibida! MessageID=" + str(messageID)
+			myMinionDo = MinionGetPic(messageID) # // provide messageID to object
+			myMinionDo.MasterGru = MASTER_GRU
+			str2Send = myMinionDo.GetPic() + "\r\n"
+			myMinionDo = None	# // delete the object
+			if re.search( r'^Error', str2Send):
+				return 'msg ' + peer + str2Send + '\r\n'
+			return str2Send
+		# // file reception, asked by @esturniolo
+		# // we filter txt file
+		if re.search( r'^\[document.*\.txt.*', message.strip() ):
+			# // print "Debug file recibida! MessageID=" + str(messageID)
+			myMinionDo = MinionGetFile(messageID) # // provide messageID to object
+			myMinionDo.MasterGru = MASTER_GRU
+			str2Send = myMinionDo.GetFile() + "\r\n"
+			myMinionDo = None	# // delete the object
+			if re.search( r'^Error', str2Send):
+				return 'msg ' + peer + str2Send + '\r\n'
+			return str2Send
+
+
+		
 
 	except:
 		pass
+
 
 if __name__ == "__main__":
 	main()
