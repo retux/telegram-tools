@@ -2,6 +2,9 @@
 
 from subprocess import Popen, PIPE
 import re
+import sqlite3
+
+SQLITE_WEATHER='weather-data.sql'
 
 class MinionLauncher:
 	def __init__(self):
@@ -23,7 +26,7 @@ class MinionUptime(MinionLauncher):
 			return "Error: minion says no uptime available."
 
 
-# parent class, returns fortune cookie
+# child class, returns fortune cookie
 class MinionGetFortune(MinionLauncher):
 	def __init__(self):
 		self.Command = "getFortune"
@@ -69,4 +72,29 @@ class MinionGetFile(MinionLauncher):
 				return "Error, minion got a suspicious message id."
 		except:
 			return "Error, minion got an incorrect message id."
+
+
+class MinionGetBAWeather(MinionLauncher):
+	def __init__(self):
+		self.Command = "getBAweather"
+		
+	def GetConditions(self):
+		try:	
+			str2send = ""
+			db = sqlite3.connect(SQLITE_WEATHER)
+			cursor = db.cursor()
+			cursor.execute('SELECT * FROM current_condition')
+			row = cursor.fetchone()
+			while row != None:
+				str2send =  ' ' + str(row[0]) + ': ' + str(row[1]) + ' C, hum.: ' + str(row[2]) + ' PA: ' + str(row[3]) + ', visibilidad: ' + str(row[5]) + '. Hora obs.: ' + str(row[6]) + ' GMT (por ahora). Datos de World Weather API.'
+				# Don't forget fetching at last, cos' not using while (True):
+				row = cursor.fetchone()
+			return str2send
+		except Exception as Error:
+			return "SQLite Error: " + str(Error)
+		finally:
+			db.close()
+
+
+
 
