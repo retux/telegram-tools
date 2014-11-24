@@ -73,7 +73,9 @@ miniondo=sendspeech(@<peer> + Hi man, how are you doing?)
 	Will send convert text to speech and send the audio to <peer>, where <peer> is a contact from your
 	telegram contact_list. Here "Hi man, how are you doing?" was the text to be converted to speech.	
 
-
+This feature requires Festival software package, who actually do the magic of voice synthesizing. You can
+also install your local language package.
+lame is necessary too in order to encode audio.
 
 Disclaimer: this code is under GPL License, and is provided as it is. Use at your own risk.
 ----------

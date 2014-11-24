@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import subprocess	# For dependencies check method
+import subprocess	
 import re
 import sqlite3
 
