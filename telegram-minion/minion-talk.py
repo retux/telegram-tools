@@ -77,6 +77,7 @@ def parseCommand(reply):
 		if re.search( r'miniondo=', message):
 			minion, command = message.split('=', 1)
 			command = command.strip()
+
 			if command == 'getUptime':
 				myMinionDo = MinionUptime()
 				# This is my master, from him I'll accept commands
@@ -94,6 +95,37 @@ def parseCommand(reply):
 				str2Send = 'msg ' + peer + Fortune + "\r\n"				
 				myMinionDo = None		# // delete the object
 				return str2Send
+
+			# command to convert txt to speech using festival voice sinthesizer if available
+			# peer might send this command:
+			# miniondo = sendspeech(@contact + Mary had a little lamb)
+			# where "Mary had a little lamb" in this example is the text to be sent to contact (peer).
+			# this is a feature intended to send msg to other peers, not the one who send de command (Gru).
+
+			if re.search(r'^sendspeech', command):
+				params = command.split('(')
+				#print "Debug params[1]=" + params[1]
+				parsToUse = params[1].split('+')
+				Contact = parsToUse[0]
+				Contact = Contact.strip()
+				Contact = re.sub(r'@', '', Contact)
+				if Contact == 'myself':
+					Contact = peer
+				text2Speech = parsToUse[1]
+				text2Speech = re.sub(r'\)', '', text2Speech)
+				parsToUse = None
+				params = None
+				myMinionDo = MinionGetTalk(Contact, text2Speech)
+				# This is the onle feature we're validanting originating peer (MASTER_GRU)
+				if peer != MASTER_GRU:	
+					str2send = "msg " + peer + " Peer not allowed to send audio \r\n"
+					return str2send
+				if myMinionDo.FileReady:
+					str2send = "send_audio " + myMinionDo.Contact + " " + myMinionDo.AudioFile + "\r\n"
+				else:
+					str2send = "Error: " + MyMinionDo.DepMsg + "\r\n"
+				myMinionDo = None
+				return str2send
 			else:
 				return -1
 		# // Check for other actions, like receiving pics or files. Asked by @esturniolo

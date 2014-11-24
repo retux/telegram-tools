@@ -1,17 +1,16 @@
 # -*- coding: utf-8 -*-
 
-from subprocess import Popen, PIPE
+import subprocess	# For dependencies check method
 import re
 import sqlite3
 
-SQLITE_WEATHER='weather-data.sql'
+SQLITE_WEATHER = 'weather-data.sql'
 
 class MinionLauncher:
 	def __init__(self):
 		self.MasterGru = 'Matías_Retux'
 		self.DownloadDir = '/tmp'
 		self.Command = ""
-
 	
 # Example of parent class, returns server's uptime
 class MinionUptime(MinionLauncher):
@@ -20,7 +19,7 @@ class MinionUptime(MinionLauncher):
 
 	def GetUptime(self):
 		try:
-			p = Popen(["uptime"], stdout=PIPE)
+			p = subprocess.Popen(["uptime"], stdout=subprocess.PIPE)
 			return p.communicate()[0]
 		except:
 			return "Error: minion says no uptime available."
@@ -33,7 +32,7 @@ class MinionGetFortune(MinionLauncher):
 
 	def GetFortune(self):
 		try:
-			p = Popen(["fortune"], stdout=PIPE)
+			p = subprocess.Popen(["fortune"], stdout=subprocess.PIPE)
 			FortuneNoLF = re.sub(r'\n', " ", p.communicate()[0])
 			return ' ' + FortuneNoLF
 			#return ' ' + p.communicate()[0]
@@ -86,7 +85,7 @@ class MinionGetBAWeather(MinionLauncher):
 			cursor.execute('SELECT * FROM current_condition')
 			row = cursor.fetchone()
 			while row != None:
-				str2send =  ' ' + str(row[0]) + ': ' + str(row[1]) + ' C, hum.: ' + str(row[2]) + ' PA: ' + str(row[3]) + ', visibilidad: ' + str(row[5]) + '. Hora obs.: ' + str(row[6]) + ' GMT (por ahora). Datos de World Weather API.'
+				str2send =  ' ' + str(row[0]) + ': ' + str(row[1]) + ' C, hum.: ' + str(row[2]) + '% PA: ' + str(row[3]) + ', visibilidad: ' + str(row[5]) + '. Hora obs.: ' + str(row[6]) + ' GMT. Datos de World Weather API.'
 				# Don't forget fetching at last, cos' not using while (True):
 				row = cursor.fetchone()
 			return str2send
@@ -96,5 +95,58 @@ class MinionGetBAWeather(MinionLauncher):
 			db.close()
 
 
+
+class MinionGetTalk(MinionLauncher):
+	def __init__(self, Contact=None, text2Speech=None):
+
+		self.Command = 'sendSpeech'
+		self.Contact = Contact
+		self.Text2Speech = text2Speech
+		self.State = False
+		self.FileReady = False
+		# To enable minion speak, these dependencies must be met: festival (General multi-lingual speech synthesis system)
+		# Aditional language package for your own national language can be installed too. For spanish I'm using
+		# festvox-palpc16k (Male Spanish voice Voz for Festival).
+		# For mp3 encoding: lame (Open source MP3 encoder).
+		# Audio tools (optionals) in order to minion to speak
+
+		self.FestivalUtil = 'text2wave'
+		self.MP3Enc = 'lame'
+		self.AudioFile = '/tmp/salida.mp3'
+		self.DepMsg = None
+		self.CheckDependencies()
+		if self.State:
+			self.GetSpeech()
+
+
+
+	def CheckDependencies(self):
+		# Remember, this version is for *nix, windows version should be different
+		if subprocess.call([ 'which', self.FestivalUtil ], stdout=subprocess.PIPE) == 0:
+			if subprocess.call([ 'which', self.MP3Enc ], stdout=subprocess.PIPE) == 0:
+				self.State = True
+			else:
+				self.DepMsg = self.MP3Enc + ' not found, install it using pakage manager.'
+				self.State = False
+		else:
+			self.DepMsg = self.FestivalUtil + ' not found, install it using pakage manager.'
+			self.State = False
+
+	def GetSpeech(self):
+		if len(self.Contact) == 0 and len(self.Text2Speech) == 0:
+			self.DepMsg = "No message or contact provided!"
+			self.State = False
+			return False
+
+		try:
+			p = subprocess.Popen(["echo '" + self.Text2Speech + "'" + " | " + self.FestivalUtil + " | " + self.MP3Enc + " --quiet -V9 -b 32 --vbr-new - > " + self.AudioFile ], shell=True, stdout=subprocess.PIPE)
+
+			self.State = True
+			self.FileReady = True
+			return True
+		except:
+			self.DepMsg = "Error trying to create audio file. Dep missing?"
+			self.State = False
+			return False
 
 

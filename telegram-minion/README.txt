@@ -32,6 +32,13 @@ Within minion-talk.py there's only a basic filtering. The following lines, use a
 So, more is needed, filtering by mime/type... or some safer way. And remember: we're not filtering messages by sender (GRU).
 If you need it remember to filter it.
 
+Install procedure:
+-----------------
+
+1) Install telegram-cli you can get it from here: https://github.com/vysheng/tg
+   Follow build and install procedure for the architecture you'll run the program.
+
+
 
 Start procedure:
 ---------------
@@ -42,6 +49,29 @@ Start procedure:
 
 	$ nohup /path/to/minion-talk.py &
 
+
+
+How the minion works?
+--------------------
+
+Minion reacts from messages received from telegram. For instance, these actions are available:
+
+miniondo=getUptime
+
+	Will give you back the host's uptime.
+
+miniondo=getFortune
+
+	Will give you back a fortune cookie. This feature requires fortune program (just apt-get install fortune)
+
+miniondo=getBAWeather
+
+	Will give you back the current weather conditions for Buenos Aires area.
+
+miniondo=sendspeech(@<peer> + Hi man, how are you doing?)
+
+	Will send convert text to speech and send the audio to <peer>, where <peer> is a contact from your
+	telegram contact_list. Here "Hi man, how are you doing?" was the text to be converted to speech.	
 
 
 
