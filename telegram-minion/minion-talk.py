@@ -96,6 +96,15 @@ def parseCommand(reply):
 				myMinionDo = None		# // delete the object
 				return str2Send
 
+			# get BA weather conditions, with miniondo=getBAweather
+			if command == 'getBAweather':
+				myMinionDo = MinionGetBAWeather()
+				myMinionDo.MasterGru = MASTER_GRU
+				conditions = myMinionDo.GetConditions()
+				str2Send = 'msg ' + peer + conditions + "\r\n"
+				myMinionDo = None               # // delete the object
+				return str2Send
+
 			# command to convert txt to speech using festival voice sinthesizer if available
 			# peer might send this command:
 			# miniondo = sendspeech(@contact + Mary had a little lamb)
