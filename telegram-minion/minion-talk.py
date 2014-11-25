@@ -132,7 +132,7 @@ def parseCommand(reply):
 				if myMinionDo.FileReady:
 					str2send = "send_audio " + myMinionDo.Contact + " " + myMinionDo.AudioFile + "\r\n"
 				else:
-					str2send = "Error: " + MyMinionDo.DepMsg + "\r\n"
+					str2send = "msg " + peer + " Error: " + myMinionDo.DepMsg + "\r\n"
 				myMinionDo = None
 				return str2send
 			else:
