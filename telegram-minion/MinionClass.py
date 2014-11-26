@@ -139,14 +139,18 @@ class MinionGetTalk(MinionLauncher):
 			return False
 
 		try:
-			p = subprocess.Popen(["echo '" + self.Text2Speech + "'" + " | " + self.FestivalUtil + " | " + self.MP3Enc + " --quiet -V9 -b 32 --vbr-new - > " + self.AudioFile ], shell=True, stdout=subprocess.PIPE)
-
-			self.State = True
-			self.FileReady = True
-			return True
+			p = subprocess.Popen(["echo '" + self.Text2Speech + "'" + " | " + self.FestivalUtil + " | " + self.MP3Enc + " --quiet -V9 -b 32 --vbr-new - > " + self.AudioFile ], shell=True)
+			res = p.wait()
+			if res == 0:
+				self.State = True
+				self.FileReady = True
+				return True
+			else:
+				return False
 		except:
 			self.DepMsg = "Error trying to create audio file. Dep missing?"
 			self.State = False
+			self.FileReady = False
 			return False
 
 

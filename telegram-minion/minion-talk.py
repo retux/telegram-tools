@@ -71,6 +71,7 @@ def parseCommand(reply):
 		#print "msgID: " + messageID
 		#print "hour: " + hour
 		#print "peer: " + peer
+		#print "MASTER_GRU: " + MASTER_GRU
 		#print "message: " + message
 		# // EOF for dubbugging
 		# // Check for commands
@@ -105,7 +106,7 @@ def parseCommand(reply):
 				myMinionDo = None               # // delete the object
 				return str2Send
 
-			# command to convert txt to speech using festival voice sinthesizer if available
+			# command to convert txt to speech using festival voice sinthesizer if available.
 			# peer might send this command:
 			# miniondo = sendspeech(@contact + Mary had a little lamb)
 			# where "Mary had a little lamb" in this example is the text to be sent to contact (peer).
@@ -126,8 +127,8 @@ def parseCommand(reply):
 				params = None
 				myMinionDo = MinionGetTalk(Contact, text2Speech)
 				# This is the onle feature we're validanting originating peer (MASTER_GRU)
-				if peer != MASTER_GRU:	
-					str2send = "msg " + peer + " Peer not allowed to send audio \r\n"
+				if MASTER_GRU != peer:	
+					str2send = "msg " + peer + " Peer: " + peer + " not allowed to send audio \r\n"
 					return str2send
 				if myMinionDo.FileReady:
 					str2send = "send_audio " + myMinionDo.Contact + " " + myMinionDo.AudioFile + "\r\n"
