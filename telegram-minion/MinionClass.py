@@ -32,7 +32,8 @@ class MinionGetFortune(MinionLauncher):
 
 	def GetFortune(self):
 		try:
-			p = subprocess.Popen(["fortune"], stdout=subprocess.PIPE)
+			# Adapt to fit your needs: /usr/games/fortune is where fortune is installed in Debian.
+			p = subprocess.Popen(["/usr/games/fortune"], stdout=subprocess.PIPE)
 			FortuneNoLF = re.sub(r'\n', " ", p.communicate()[0])
 			return ' ' + FortuneNoLF
 			#return ' ' + p.communicate()[0]

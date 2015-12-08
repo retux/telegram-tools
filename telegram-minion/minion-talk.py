@@ -56,14 +56,14 @@ def parseCommand(reply):
 	try:
 		# Agregar validacion de Gru
 		data = re.sub(r'^ANSWER.*', "", reply)
-		data = re.sub(r'\n',"", data)
+		#data = re.sub(r'\n',"", data)
 
-		#print "Debug data=" + data
+		print "Debug data=" + data
 		# Don't know why but Telegram changed '<<<' string recently
 		#if re.search( r'«««', data):		
 		#	header, message = data.split('«««', 1)
 
-		if re.search( r'<<<', data):		
+		if re.search( r'<<<', data) or re.search( r'«««', data):		
 			header, message = data.split('<<<', 1)
 
 		if re.search( r' >>>', data):		
@@ -76,12 +76,12 @@ def parseCommand(reply):
 		peer = peer.strip()
 		peer = re.sub(r' ', "_", peer)
 		# // BOF Just for some debugging
-		print "msgID: " + messageID
-		print "hour: " + hour
-		print "peer: " + peer
-		print "MASTER_GRU: " + MASTER_GRU
-		print "header: " + header
-		print "message: " + message
+		#print "msgID: " + messageID
+		#print "hour: " + hour
+		#print "peer: " + peer
+		#print "MASTER_GRU: " + MASTER_GRU
+		#print "header: " + header
+		#print "message: " + message
 		# // EOF for dubbugging
 		# // Check for commands
 		if re.search( r'miniondo=', message):
